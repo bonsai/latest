@@ -1,0 +1,26 @@
+name: latest
+version: 1
+role: active-repository-view
+
+capabilities:
+  - rank-active-repositories
+  - publish-working-set
+  - browse-current-bonsai-activity
+
+inputs:
+  - github-repository-metadata
+  - repository-activity
+  - repository-health
+
+outputs:
+  - latest-repositories
+  - activity-score
+  - working-set
+
+contracts:
+  organization_index: bonsai/repos
+
+policy:
+  source: existing-bonsai-repositories-only
+  organization_decisions: coordinator
+  orchestration: aw
