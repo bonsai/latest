@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>bonsai/latest — Active Repository Viewer</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#17202a;background:#f6f7f9}body{margin:0}header{position:sticky;top:0;background:white;border-bottom:1px solid #ddd;padding:16px 20px;z-index:2}h1{margin:0;font-size:20px}.sub{color:#667085;font-size:13px;margin-top:4px}main{max-width:1100px;margin:auto;padding:18px}.bar{display:flex;gap:8px;align-items:center;margin-bottom:14px}button{border:1px solid #ccc;background:white;border-radius:8px;padding:8px 12px;cursor:pointer}.status{font-size:13px;color:#667085}.grid{display:grid;gap:8px}.repo{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;background:white;border:1px solid #e3e5e8;border-radius:10px;padding:12px 14px;text-decoration:none;color:inherit}.rank{font-weight:700;color:#98a2b3}.name{font-weight:650}.desc{font-size:12px;color:#667085;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:12px;color:#667085;text-align:right}.score{font-size:16px;font-weight:700}.err{padding:16px;background:#fff0f0;border:1px solid #f2b8b8;border-radius:8px;color:#a33}@media(max-width:650px){.repo{grid-template-columns:32px 1fr}.meta{text-align:left;grid-column:2}.desc{white-space:normal}.bar{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header><h1>bonsai/latest</h1><div class="sub">実在する bonsai/* の活動度 Viewer — current working set</div></header>
+<main><div class="bar"><button id="refresh">↻ Refresh</button><span class="status" id="status">loading…</span></div><div id="list" class="grid"></div></main>
+<script>
+const api='https://api.github.com/users/bonsai/repos?per_page=100&sort=updated&direction=desc&type=owner';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function score(r){const age=Math.max(0,(Date.now()-new Date(r.pushed_at||r.updated_at))/86400000);let s=100*Math.exp(-age/14);s+=Math.min(r.stargazers_count,50)*.25;s+=Math.min(r.open_issues_count,30)*.35;if(r.archived)s*=.1;return Math.round(s*10)/10}
+async function load(){const st=document.getElementById('status'),list=document.getElementById('list');st.textContent='loading…';list.innerHTML='';try{const res=await fetch(api,{headers:{Accept:'application/vnd.github+json'}});if(!res.ok)throw Error(res.status+' '+res.statusText);const repos=await res.json();repos.filter(r=>!r.fork&&!r.archived).sort((a,b)=>score(b)-score(a)).slice(0,30).forEach((r,i)=>{const a=document.createElement('a');a.className='repo';a.href=r.html_url;a.target='_blank';a.rel='noopener';a.innerHTML=`<div class="rank">${String(i+1).padStart(2,'0')}</div><div><div class="name">${esc(r.name)}</div><div class="desc">${esc(r.description||'')}</div></div><div class="meta"><div class="score">${score(r)}</div><div>${esc(r.language||'—')} · ★ ${r.stargazers_count} · issues ${r.open_issues_count}</div></div>`;list.appendChild(a)});st.textContent=`${list.children.length} repos · ${new Date().toLocaleString('ja-JP')}`}catch(e){list.innerHTML=`<div class="err">取得失敗: ${esc(e.message)}</div>`;st.textContent='error'}}
+document.getElementById('refresh').onclick=load;load();
+</script>
+</body></html>
