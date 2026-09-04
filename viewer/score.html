@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>bonsai/latest — Score Guide</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0b0d10;color:#e8edf2}
+body{margin:0;background:linear-gradient(180deg,#0b0d10,#11161b);min-height:100vh}
+main{max-width:900px;margin:auto;padding:32px 20px 56px}
+a{color:#9bd1ff;text-decoration:none}a:hover{text-decoration:underline}
+header{margin-bottom:28px}.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.65}
+h1{font-size:clamp(30px,6vw,52px);margin:8px 0}.lead{font-size:18px;line-height:1.7;opacity:.85}
+.card{background:#151a20;border:1px solid #29313a;border-radius:16px;padding:22px;margin:16px 0;box-shadow:0 10px 30px #0004}
+h2{margin-top:0;font-size:22px}.formula{font:600 17px ui-monospace,SFMono-Regular,Consolas,monospace;background:#0b0f13;border-radius:10px;padding:18px;overflow:auto;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.metric{background:#0f1419;border-radius:12px;padding:16px}.metric strong{display:block;font-size:25px;margin-bottom:6px}.muted{opacity:.65;font-size:14px;line-height:1.6}
+.scale{display:flex;height:14px;border-radius:99px;overflow:hidden;margin:16px 0 8px}.scale span{flex:1}.s1{background:#333}.s2{background:#555}.s3{background:#777}.s4{background:#999}.s5{background:#bbb}.labels{display:flex;justify-content:space-between;font-size:12px;opacity:.6}
+code{background:#0b0f13;padding:2px 6px;border-radius:5px}ul{line-height:1.9}footer{margin-top:30px;opacity:.6;font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="eyebrow">bonsai/latest</div>
+<h1>Activity Score</h1>
+<p class="lead">「いま、どの repo が動いているか」を機械的に並べるためのスコアです。人手で選ぶランキングではなく、GitHub から観測できる活動を使って再現します。</p>
+<p><a href="./">← Active Repository Viewer</a></p>
+</header>
+
+<section class="card">
+<h2>現在の基本式</h2>
+<div class="formula">score = 100 × exp(−ageDays / 14) + stars × 0.25 + openIssues × 0.35</div>
+<p class="muted"><code>ageDays</code> は最後の push からの経過日数。時間が経つほど活動の基本点は指数的に下がります。</p>
+</section>
+
+<section class="card">
+<h2>1. 最近 push されたか</h2>
+<p>現在のスコアで最も大きい要素です。直近に更新された repo ほど高くなります。</p>
+<div class="formula">recency = 100 × exp(−ageDays / 14)</div>
+<ul>
+<li>push 直後 → 約 100 点</li>
+<li>14 日後 → 約 36.8 点</li>
+<li>28 日後 → 約 13.5 点</li>
+<li>古い repo → 徐々に 0 に近づく</li>
+</ul>
+<p class="muted">つまり「最近動いている」というシグナルを強く評価します。</p>
+</section>
+
+<section class="card">
+<h2>2. Stars</h2>
+<div class="grid"><div class="metric"><strong>+0.25</strong>1 star あたりの加点</div><div class="metric"><strong>最大 +12.5</strong>現在は 50 stars まで加点</div></div>
+<p class="muted">人気・外部からの関心を補助的なシグナルとして使います。活動の新しさより弱い重みです。</p>
+</section>
+
+<section class="card">
+<h2>3. Open Issues</h2>
+<div class="grid"><div class="metric"><strong>+0.35</strong>open issue 1 件あたり</div><div class="metric"><strong>最大 +10.5</strong>現在は 30 件まで加点</div></div>
+<p class="muted">未解決の課題が多い repo を「活動中」とみなす補助指標です。issue が多いだけで上位になりすぎないよう上限を設けています。</p>
+</section>
+
+<section class="card">
+<h2>Score の読み方</h2>
+<div class="scale"><span class="s1"></span><span class="s2"></span><span class="s3"></span><span class="s4"></span><span class="s5"></span></div>
+<div class="labels"><span>低い / 静的</span><span>高い / 活発</span></div>
+<p>絶対的な「repo の価値」ではありません。<strong>いま観測したときの活動度</strong>です。</p>
+<ul>
+<li>高スコア = 最近動いている可能性が高い</li>
+<li>低スコア = 最近の GitHub 活動が少ない可能性が高い</li>
+<li>Stars や issue は補助指標</li>
+<li>ランキングは観測時点で変化する</li>
+</ul>
+</section>
+
+<section class="card">
+<h2>なぜ Score を作るのか</h2>
+<p>bonsai の repo は多数あります。全部を毎回人間が読むのではなく、まず活動度で <strong>Working Set</strong> を作ります。</p>
+<div class="formula">bonsai/* → activity observation → score → top 30 → Working Set → AW / Coordinator</div>
+<p class="muted">重要なのは「30 repo だけが組織」なのではなく、全 repo の中から現在の作業対象を動的に切り出すことです。</p>
+</section>
+
+<section class="card">
+<h2>今後の拡張</h2>
+<p>この score は最初の単純な版です。将来的には GitHub の観測データと BQML の分析結果を組み合わせます。</p>
+<ul>
+<li>commit frequency / development velocity</li>
+<li>Pull Request activity</li>
+<li>issue activity</li>
+<li>repository health</li>
+<li>dependency / capability relationships</li>
+<li>BQML による自己組織化・クラスタリング</li>
+</ul>
+<p class="muted">最終的には、Score は「価値」ではなく「現在の組織状態を観測するための信号」として扱います。</p>
+</section>
+
+<footer>bonsai/latest · score is an observable activity signal, not a quality judgment.</footer>
+</main>
+</body>
+</html>
