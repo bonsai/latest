@@ -1,0 +1,49 @@
+{
+  "source": "bonsai/github-observatory",
+  "source_stats_generated_at": "2026-09-07T00:57:23.054502+00:00",
+  "dumped_at": "2026-09-17",
+  "repo_stats": {
+    "repositories": 1444,
+    "forks": 453,
+    "archived": 0,
+    "total_stars": 4,
+    "avg_size_kb": 39849.760387811635,
+    "oldest_created": "2008-09-16T17:28:47Z"
+  },
+  "top_languages": [
+    ["Python",293],
+    ["(none)",281],
+    ["TypeScript",182],
+    ["HTML",146],
+    ["JavaScript",131],
+    ["Go",79],
+    ["Rust",45],
+    ["Java",37],
+    ["PowerShell",32],
+    ["C++",30]
+  ],
+  "top_code_size": [
+    ["wiki",1095,91954,105624263,10],
+    ["voice-bbs-web",51,13913,1326715,10],
+    ["sync-repos",54,13033,469498,8],
+    ["kamera",101,11384,512669,12],
+    ["idol-produce",42,11326,4753822,8],
+    ["voice_bbs",113,10389,485731,10],
+    ["bon-anima",37,6446,230862,7],
+    ["world-ontology",51,3980,171853,7],
+    ["github-observatory",30,2760,705216,8],
+    ["bonsai",11,1605,316520,6]
+  ],
+  "top_extensions": [
+    ["md",995,94194],
+    ["txt",117,0],
+    ["json",90,36922],
+    ["(none)",50,0],
+    ["py",47,7957],
+    ["html",45,11003],
+    ["js",40,5518],
+    ["ts",36,3925],
+    ["ex",33,0],
+    ["ps1",20,2890]
+  ]
+}
