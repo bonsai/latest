@@ -72,3 +72,10 @@ The score should be reproducible from collected data rather than manually curate
 Start with the existing Bonsai repositories only. Do not invent or duplicate repositories.
 
 The implementation can later publish machine-readable data such as `data/latest.json` and a static GitHub Pages dashboard.
+
+
+## Monorepo migration notice
+
+The target of record is moving to [`bonsai/wiki/projects/latest/`](https://github.com/bonsai/wiki/tree/master/projects/latest). Viewer assets, generated data, deployment workflows, and the published URL must be migrated and verified before this repository is archived.
+
+This repository is **not archived yet**. Track progress in [bonsai/wiki#322](https://github.com/bonsai/wiki/issues/322).
